@@ -31,10 +31,10 @@ var helper = {
       for (var i = 0; i < helper.Route.routes.length; i++) {
         if (helper.Route.routes[i].hasOwnProperty('route')) {
           if (helper.Route.routes[i].route === routeArr[0]) {
-            if(qsObj){
+            if (qsObj) {
               helper.Route.routes[i].fn(helper.Route.routes[i].name, qsObj);
-            }else{
-              helper.Route.routes[i].fn(helper.Route.routes[i].name);  
+            } else {
+              helper.Route.routes[i].fn(helper.Route.routes[i].name);
             }
             break;
           }
@@ -52,16 +52,16 @@ var helper = {
         var scriptName = "modules/" + name + ".js";
         if (!helper.Ajax.isScriptLoaded(scriptName)) {
           helper.Ajax.loadScriptAsync(scriptName, function () {
-            if(prms){
-              eval(name +".init("+ JSON.stringify(prms) + ")")
-            }else{
+            if (prms) {
+              eval(name + ".init(" + JSON.stringify(prms) + ")")
+            } else {
               eval(name + ".init();");
-            }            
+            }
           });
         } else {
-          if(prms){
-            eval(name +".init("+ JSON.stringify(prms) + ")")
-          }else{
+          if (prms) {
+            eval(name + ".init(" + JSON.stringify(prms) + ")")
+          } else {
             eval(name + ".init();");
           }
         }
@@ -238,6 +238,35 @@ var helper = {
         return arr.indexOf(item) >= index;
       });
     }
+    ,
+    geoLocation: {
+      getCoorinates: function (cb) {
+        var geolocation = navigator.geolocation;
+        geolocation.getCurrentPosition(function (pos) {
+          cb && cb(pos.coords);
+        },
+          function (err) {
+            console.log("Coordination error: " + err);
+            switch (err.code) {
+              case 1:
+                console.log("PERMISSION_DENIED");
+                break;
+              case 2:
+                console.log("POSITION_UNAVAILABLE");
+                break;
+              case 3:
+                console.log("TIMEOUT");
+                break;
+              default:
+                console.log("UNKNOWN_ERROR");
+                break;
+            }
+          });
+
+      },
+
+    }
+
   },
   Screen: {
     isInViewport: function (elem) {
@@ -546,6 +575,16 @@ var helper = {
       console.log("Socket error :" + evt.data);
     }
 
+  },
+  Konami: {
+    init: function (cb) {
+      let cursor = 0;
+      const KONAMI_CODE = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+      document.addEventListener('keydown', (e) => {
+        cursor = (e.keyCode == KONAMI_CODE[cursor]) ? cursor + 1 : 0;
+        if (cursor == KONAMI_CODE.length) cb();
+      });
+    }
   }
 };
 String.prototype.trim = function () { return this.replace(/^s+|s+$/g, ""); };
