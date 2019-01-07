@@ -52,14 +52,17 @@ var helper = {
         var scriptName = "modules/" + name + ".js";
         if (!helper.Ajax.isScriptLoaded(scriptName)) {
           helper.Ajax.loadScriptAsync(scriptName, function () {
-            if (prms) {
+
+            if (!helper.Util.isEmpty(prms)) {
+
               eval(name + ".init(" + JSON.stringify(prms) + ")")
             } else {
               eval(name + ".init();");
             }
           });
         } else {
-          if (prms) {
+          if (!helper.Util.isEmpty(prms)) {
+
             eval(name + ".init(" + JSON.stringify(prms) + ")")
           } else {
             eval(name + ".init();");
@@ -224,6 +227,14 @@ var helper = {
   Util: {
     getProperties: function (jsObj) {
       return Object.keys(jsObj);
+    },
+    isEmpty: function (jsObj) {
+      for (var key in jsObj) {
+        if (jsObj.hasOwnProperty(key)) {
+          return false;
+        }
+      }
+      return true;
     },
     domReady: function (cb) {
       if (typeof cb !== 'function') return;
@@ -587,8 +598,13 @@ var helper = {
     }
   }
 };
-String.prototype.trim = function () { return this.replace(/^s+|s+$/g, ""); };
+String.prototype.trim = function () {
+  return this.replace(/^s+|s+$/g, "");
+};
+String.prototype.capitalize = function () {
+  return this.charAt(0).toUpperCase() + this.slice(1);
+};
 
 //this init the route core.
-helper.Route.init();
-helper.Route.configure();
+//helper.Route.init();
+//helper.Route.configure();
