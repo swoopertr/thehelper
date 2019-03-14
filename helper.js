@@ -52,9 +52,7 @@ var helper = {
         var scriptName = "modules/" + name + ".js";
         if (!helper.Ajax.isScriptLoaded(scriptName)) {
           helper.Ajax.loadScriptAsync(scriptName, function () {
-
             if (!helper.Util.isEmpty(prms)) {
-
               eval(name + ".init(" + JSON.stringify(prms) + ")")
             } else {
               eval(name + ".init();");
@@ -62,7 +60,6 @@ var helper = {
           });
         } else {
           if (!helper.Util.isEmpty(prms)) {
-
             eval(name + ".init(" + JSON.stringify(prms) + ")")
           } else {
             eval(name + ".init();");
@@ -248,36 +245,14 @@ var helper = {
       return arr.filter(function (item, index) {
         return arr.indexOf(item) >= index;
       });
-    }
-    ,
-    geoLocation: {
-      getCoorinates: function (cb) {
-        var geolocation = navigator.geolocation;
-        geolocation.getCurrentPosition(function (pos) {
-          cb && cb(pos.coords);
-        },
-          function (err) {
-            console.log("Coordination error: " + err);
-            switch (err.code) {
-              case 1:
-                console.log("PERMISSION_DENIED");
-                break;
-              case 2:
-                console.log("POSITION_UNAVAILABLE");
-                break;
-              case 3:
-                console.log("TIMEOUT");
-                break;
-              default:
-                console.log("UNKNOWN_ERROR");
-                break;
-            }
-          });
+    },
+    disableRightClick: function(){
+      document.addEventListener('contextmenu', function(e){
+        e.preventDefault();
+      });
 
-      },
 
     }
-
   },
   Screen: {
     isInViewport: function (elem) {
@@ -302,84 +277,16 @@ var helper = {
     scrollToBottom: function () {
       window.scrollTo(0, document.body.scrollHeight);
     },
-    scrollToElem: function (destination, duration, easing, cb) {
-      if (duration) {
-        duration = 200;
+    scrollToElem: function (elem) {
+      elem = elem[0];
+      var x = 0;
+      while(elem){
+         x += elem.offsetTop;
+         elem = elem.offsetParent;
       }
-      if (easing) {
-        easing = 'linear';
-      }
-      var easings = {
-        linear: function (t) {
-          return t;
-        },
-        easeInQuad: function (t) {
-          return t * t;
-        },
-        easeOutQuad: function (t) {
-          return t * (2 - t);
-        },
-        easeInOutQuad: function (t) {
-          return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-        },
-        easeInCubic: function (t) {
-          return t * t * t;
-        },
-        easeOutCubic: function (t) {
-          return (--t) * t * t + 1;
-        },
-        easeInOutCubic: function (t) {
-          return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-        },
-        easeInQuart: function (t) {
-          return t * t * t * t;
-        },
-        easeOutQuart: function (t) {
-          return 1 - (--t) * t * t * t;
-        },
-        easeInOutQuart: function (t) {
-          return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t;
-        },
-        easeInQuint: function (t) {
-          return t * t * t * t * t;
-        },
-        easeOutQuint: function (t) {
-          return 1 + (--t) * t * t * t * t;
-        },
-        easeInOutQuint: function (t) {
-          return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t;
-        }
-      };
-      var start = window.pageYOffset;
-      var startTime = 'now' in window.performance ? performance.now() : new Date().getTime();
-      var documentHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);
-      var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
-      var destinationOffset = typeof destination === 'number' ? destination : destination.offsetTop;
-      var destinationOffsetToScroll = Math.round(documentHeight - destinationOffset < windowHeight ? documentHeight - windowHeight : destinationOffset);
-
-      if ('requestAnimationFrame' in window === false) {
-        window.scroll(0, destinationOffsetToScroll);
-        cb && cb();
-        return;
-      }
-
-      function scroll() {
-        var now = 'now' in window.performance ? performance.now() : new Date().getTime();
-        var time = Math.min(1, ((now - startTime) / duration));
-        var timeFunction = easings[easing](time);
-        window.scroll(0, Math.ceil((timeFunction * (destinationOffsetToScroll - start)) + start));
-
-        if (window.pageYOffset === destinationOffsetToScroll) {
-          cb && cb();
-          return;
-        }
-
-        requestAnimationFrame(scroll);
-      }
-
-      scroll();
-    }
-  },
+      window.scroll(0, x - 80);
+  }
+},
   Manipulation: {
     createElement: function (options) {
       var el
@@ -586,24 +493,9 @@ var helper = {
       console.log("Socket error :" + evt.data);
     }
 
-  },
-  Konami: {
-    init: function (cb) {
-      let cursor = 0;
-      const KONAMI_CODE = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
-      document.addEventListener('keydown', (e) => {
-        cursor = (e.keyCode == KONAMI_CODE[cursor]) ? cursor + 1 : 0;
-        if (cursor == KONAMI_CODE.length) cb();
-      });
-    }
   }
 };
-String.prototype.trim = function () {
-  return this.replace(/^s+|s+$/g, "");
-};
-String.prototype.capitalize = function () {
-  return this.charAt(0).toUpperCase() + this.slice(1);
-};
+
 
 //this init the route core.
 //helper.Route.init();
