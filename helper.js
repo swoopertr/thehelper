@@ -5,72 +5,7 @@ var helper = {
   Config: {
     webSocketTimeout: 15000,
     xhrTimeout: 30,
-  },
-  Route: {
-    routes: [],
-    clickHandler: function (e) {
-      e.preventDefault();
-      var url = this.getAttribute('href');
-      helper.Event.pub('history.event.change', url);
-    },
-    addRoute: function (route, name, fn) {
-      helper.Route.routes.push({ 'route': route, 'name': name, 'fn': fn });
-    },
-    init: function () {
-      helper.Event.sub('history.event.change', helper.Route.changed);
-      helper.Event.bindLive('a', 'click', helper.Route.clickHandler);
-      console.log('route initialized');
-    },
-    configure: function () {
-      helper.Route.addRoute('/', 'home', helper.Route.Module.inject);
-      helper.Route.addRoute('/news', 'news', helper.Route.Module.inject);
-    },
-    loader: function (url) {
-      var routeArr = url.split('?');
-      var qsObj = helper.QueryString.getParams(url);
-      for (var i = 0; i < helper.Route.routes.length; i++) {
-        if (helper.Route.routes[i].hasOwnProperty('route')) {
-          if (helper.Route.routes[i].route === routeArr[0]) {
-            if (qsObj) {
-              helper.Route.routes[i].fn(helper.Route.routes[i].name, qsObj);
-            } else {
-              helper.Route.routes[i].fn(helper.Route.routes[i].name);
-            }
-            break;
-          }
-        }
-      }
-    },
-    changed: function (url) {
-      history.pushState(null, null, url);
-      console.log(url);
-      helper.Route.loader(url);
-
-    },
-    Module: {
-      inject: function (name, prms) {
-        var scriptName = "modules/" + name + ".js";
-        if (!helper.Ajax.isScriptLoaded(scriptName)) {
-          helper.Ajax.loadScriptAsync(scriptName, function () {
-
-            if (!helper.Util.isEmpty(prms)) {
-
-              eval(name + ".init(" + JSON.stringify(prms) + ")")
-            } else {
-              eval(name + ".init();");
-            }
-          });
-        } else {
-          if (!helper.Util.isEmpty(prms)) {
-
-            eval(name + ".init(" + JSON.stringify(prms) + ")")
-          } else {
-            eval(name + ".init();");
-          }
-        }
-      }
-    }
-  },
+  },  
   SelectDom: {
     getById: function (id) {
       return document.getElementById(id);
@@ -302,82 +237,8 @@ var helper = {
     scrollToBottom: function () {
       window.scrollTo(0, document.body.scrollHeight);
     },
-    scrollToElem: function (destination, duration, easing, cb) {
-      if (duration) {
-        duration = 200;
-      }
-      if (easing) {
-        easing = 'linear';
-      }
-      var easings = {
-        linear: function (t) {
-          return t;
-        },
-        easeInQuad: function (t) {
-          return t * t;
-        },
-        easeOutQuad: function (t) {
-          return t * (2 - t);
-        },
-        easeInOutQuad: function (t) {
-          return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-        },
-        easeInCubic: function (t) {
-          return t * t * t;
-        },
-        easeOutCubic: function (t) {
-          return (--t) * t * t + 1;
-        },
-        easeInOutCubic: function (t) {
-          return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-        },
-        easeInQuart: function (t) {
-          return t * t * t * t;
-        },
-        easeOutQuart: function (t) {
-          return 1 - (--t) * t * t * t;
-        },
-        easeInOutQuart: function (t) {
-          return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t;
-        },
-        easeInQuint: function (t) {
-          return t * t * t * t * t;
-        },
-        easeOutQuint: function (t) {
-          return 1 + (--t) * t * t * t * t;
-        },
-        easeInOutQuint: function (t) {
-          return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t;
-        }
-      };
-      var start = window.pageYOffset;
-      var startTime = 'now' in window.performance ? performance.now() : new Date().getTime();
-      var documentHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);
-      var windowHeight = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
-      var destinationOffset = typeof destination === 'number' ? destination : destination.offsetTop;
-      var destinationOffsetToScroll = Math.round(documentHeight - destinationOffset < windowHeight ? documentHeight - windowHeight : destinationOffset);
-
-      if ('requestAnimationFrame' in window === false) {
-        window.scroll(0, destinationOffsetToScroll);
-        cb && cb();
-        return;
-      }
-
-      function scroll() {
-        var now = 'now' in window.performance ? performance.now() : new Date().getTime();
-        var time = Math.min(1, ((now - startTime) / duration));
-        var timeFunction = easings[easing](time);
-        window.scroll(0, Math.ceil((timeFunction * (destinationOffsetToScroll - start)) + start));
-
-        if (window.pageYOffset === destinationOffsetToScroll) {
-          cb && cb();
-          return;
-        }
-
-        requestAnimationFrame(scroll);
-      }
-
-      scroll();
+    scrollToElem: function (elem) {
+      element.scrollIntoView(true);      
     }
   },
   Manipulation: {
@@ -422,6 +283,9 @@ var helper = {
     },
     removeElement: function (element) {
       element.parentNode.removeChild(element);
+    },
+    insertAfter: function(element, strHtml){
+      el.insertAdjacentHTML('afterend', htmlString);
     }
 
   },
@@ -604,6 +468,12 @@ String.prototype.trim = function () {
 String.prototype.capitalize = function () {
   return this.charAt(0).toUpperCase() + this.slice(1);
 };
+String.prototype.removeNonASCII = function(){
+  return this.replace(/[^\x20-\x7E]/g, '');
+}
+String.prototype.stripHTMLTags = function(){
+  return this.replace(/<[^>]*>/g, '');
+}
 
 //this init the route core.
 //helper.Route.init();
