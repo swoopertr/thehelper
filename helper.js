@@ -18,7 +18,7 @@ var helper = {
     isScriptLoaded: function (src) {
       var scripts = document.getElementsByTagName("script");
       for (var i = 0; i < scripts.length; i++)
-        if (scripts[i].getAttribute('src') == src) return true;
+        if (scripts[i].getAttribute('src') === src) return true;
       return false;
     },
     loadScriptAsync: function (url, cb) {
@@ -31,7 +31,7 @@ var helper = {
           script.async = false;
           if (script.readyState) {
             script.onreadystatechange = function () {
-              if (script.readyState == "loaded" || script.readyState == "complete") {
+              if (script.readyState === "loaded" || script.readyState === "complete") {
                 script.onreadystatechange = null;
                 cb && cb();
               }
@@ -51,7 +51,7 @@ var helper = {
     isCssLoaded: function (src) {
       var scripts = document.getElementsByTagName("link");
       for (var i = 0; i < scripts.length; i++)
-        if (scripts[i].getAttribute('href') == src) return true;
+        if (scripts[i].getAttribute('href') === src) return true;
       return false;
     },
     loadCssAsync: function (url, cb) {
@@ -65,7 +65,7 @@ var helper = {
 
           if (script.readyState) {
             script.onreadystatechange = function () {
-              if (script.readyState == "loaded" || script.readyState == "complete") {
+              if (script.readyState === "loaded" || script.readyState === "complete") {
                 script.onreadystatechange = null;
                 cb && cb();
               }
@@ -103,7 +103,7 @@ var helper = {
       var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
       xhr.open('POST', url);
       xhr.onreadystatechange = function () {
-        if (xhr.readyState > 3 && xhr.status == 200) {
+        if (xhr.readyState > 3 && xhr.status === 200) {
           cb && cb(xhr.responseText);
         }
       };
@@ -126,7 +126,7 @@ var helper = {
             helper.Event.events[eventName].splice(i, 1);
             break;
           }
-        };
+        }
       }
     },
     pub: function (eventName, data) {
@@ -183,36 +183,14 @@ var helper = {
       return arr.filter(function (item, index) {
         return arr.indexOf(item) >= index;
       });
-    }
-    ,
-    geoLocation: {
-      getCoorinates: function (cb) {
-        var geolocation = navigator.geolocation;
-        geolocation.getCurrentPosition(function (pos) {
-          cb && cb(pos.coords);
-        },
-          function (err) {
-            console.log("Coordination error: " + err);
-            switch (err.code) {
-              case 1:
-                console.log("PERMISSION_DENIED");
-                break;
-              case 2:
-                console.log("POSITION_UNAVAILABLE");
-                break;
-              case 3:
-                console.log("TIMEOUT");
-                break;
-              default:
-                console.log("UNKNOWN_ERROR");
-                break;
-            }
-          });
+    },
+    disableRightClick: function(){
+      document.addEventListener('contextmenu', function(e){
+        e.preventDefault();
+      });
 
-      },
 
     }
-
   },
   Screen: {
     isInViewport: function (elem) {
@@ -238,54 +216,15 @@ var helper = {
       window.scrollTo(0, document.body.scrollHeight);
     },
     scrollToElem: function (elem) {
-      element.scrollIntoView(true);      
+      elem.scrollIntoView(true);
     }
   },
   Manipulation: {
-    createElement: function (options) {
-      var el
-        , a
-        , i
-      if (!options.tagName) {
-        el = document.createDocumentFragment()
-      }
-      else {
-        el = document.createElement(options.tagName)
-        if (options.className) {
-          el.className = options.className
-        }
-
-        if (options.attributes) {
-          for (a in options.attributes) {
-            el.setAttribute(a, options.attributes[a])
-          }
-        }
-
-        if (options.html !== undefined) {
-          el.innerHTML = options.html
-        }
-      }
-
-      if (options.text) {
-        el.appendChild(document.createTextNode(options.text))
-      }
-
-      if (window.HTMLElement === undefined) {
-        window.HTMLElement = Element
-      }
-
-      if (options.childs && options.childs.length) {
-        for (i = 0; i < options.childs.length; i++) {
-          el.appendChild(options.childs[i] instanceof window.HTMLElement ? options.childs[i] : helper.Manipulation.createElement(options.childs[i]))
-        }
-      }
-      return el
-    },
     removeElement: function (element) {
       element.parentNode.removeChild(element);
     },
-    insertAfter: function(element, strHtml){
-      el.insertAdjacentHTML('afterend', htmlString);
+    insertAfter: function(el, strHtml){
+      el.insertAdjacentHTML('afterend', strHtml);
     }
 
   },
@@ -327,7 +266,7 @@ var helper = {
     get: function (name) {
       var value = "; " + document.cookie;
       var parts = value.split("; " + name + "=");
-      if (parts.length == 2) return parts.pop().split(";").shift();
+      if (parts.length === 2) return parts.pop().split(";").shift();
     },
     remove: function (name) {
       document.cookie = name + '=; Max-Age=-99999999;';
@@ -392,7 +331,7 @@ var helper = {
         adBlockEnabled = true;
       }
       testAd.remove();
-      console.log('AdBlock Enabled? ', adBlockEnabled)
+      console.log('AdBlock Enabled? ', adBlockEnabled);
       cb && cb();
     }, 100);
   },
@@ -403,7 +342,7 @@ var helper = {
     },
     keepAlive: function () {
       if (helper.Objects.webSocket) {
-        if (helper.Objects.webSocket.readyState == helper.Objects.webSocket.OPEN) {
+        if (helper.Objects.webSocket.readyState === helper.Objects.webSocket.OPEN) {
           helper.Objects.webSocket.send('');
         }
         helper.Objects.timerID = setTimeout(helper.WebSocket.keepAlive, helper.Config.webSocketTimeout);
@@ -449,17 +388,6 @@ var helper = {
     error: function (evt) {
       console.log("Socket error :" + evt.data);
     }
-
-  },
-  Konami: {
-    init: function (cb) {
-      let cursor = 0;
-      const KONAMI_CODE = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
-      document.addEventListener('keydown', (e) => {
-        cursor = (e.keyCode == KONAMI_CODE[cursor]) ? cursor + 1 : 0;
-        if (cursor == KONAMI_CODE.length) cb();
-      });
-    }
   }
 };
 String.prototype.trim = function () {
@@ -470,11 +398,7 @@ String.prototype.capitalize = function () {
 };
 String.prototype.removeNonASCII = function(){
   return this.replace(/[^\x20-\x7E]/g, '');
-}
+};
 String.prototype.stripHTMLTags = function(){
   return this.replace(/<[^>]*>/g, '');
-}
-
-//this init the route core.
-//helper.Route.init();
-//helper.Route.configure();
+};
