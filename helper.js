@@ -160,6 +160,9 @@ var helper = {
     }
   },
   Util: {
+    isInIframe: function(){
+      return window.location !== window.parent.location;
+    },
     getProperties: function (jsObj) {
       return Object.keys(jsObj);
     },
