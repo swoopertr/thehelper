@@ -160,6 +160,12 @@ var helper = {
     }
   },
   Util: {
+    removeElement: function (element) {
+      element.parentNode.removeChild(element);
+    },
+    insertAfter: function(el, strHtml){
+      el.insertAdjacentHTML('afterend', strHtml);
+    },
     isInIframe: function(){
       return window.location !== window.parent.location;
     },
@@ -181,18 +187,26 @@ var helper = {
         return cb();
       }
       document.addEventListener('DOMContentLoaded', cb, false);
-    },
-    arrayUniqneens: function (arr) {
-      return arr.filter(function (item, index) {
-        return arr.indexOf(item) >= index;
-      });
-    },
+    },  
     disableRightClick: function(){
       document.addEventListener('contextmenu', function(e){
         e.preventDefault();
       });
-
-
+    },
+    adblock: function (cb) {
+      var adBlockEnabled = false;
+      var testAd = document.createElement('div');
+      testAd.innerHTML = '&nbsp;';
+      testAd.className = 'adsbox';
+      document.body.appendChild(testAd);
+      window.setTimeout(function () {
+        if (testAd.offsetHeight === 0) {
+          adBlockEnabled = true;
+        }
+        testAd.remove();
+        console.log('AdBlock Enabled? ', adBlockEnabled);
+        cb && cb();
+      }, 100);
     }
   },
   Screen: {
@@ -221,15 +235,6 @@ var helper = {
     scrollToElem: function (elem) {
       elem.scrollIntoView(true);
     }
-  },
-  Manipulation: {
-    removeElement: function (element) {
-      element.parentNode.removeChild(element);
-    },
-    insertAfter: function(el, strHtml){
-      el.insertAdjacentHTML('afterend', strHtml);
-    }
-
   },
   QueryString: {
     build: function (data) {
@@ -321,75 +326,6 @@ var helper = {
       clear: function () {
         sessionStorage.clear();
       }
-    }
-  },
-  Adblock: function (cb) {
-    var adBlockEnabled = false;
-    var testAd = document.createElement('div');
-    testAd.innerHTML = '&nbsp;';
-    testAd.className = 'adsbox';
-    document.body.appendChild(testAd);
-    window.setTimeout(function () {
-      if (testAd.offsetHeight === 0) {
-        adBlockEnabled = true;
-      }
-      testAd.remove();
-      console.log('AdBlock Enabled? ', adBlockEnabled);
-      cb && cb();
-    }, 100);
-  },
-  WebSocket: {
-    ws: undefined,
-    isSupported: function () {
-      return !!window.WebSocket;
-    },
-    keepAlive: function () {
-      if (helper.Objects.webSocket) {
-        if (helper.Objects.webSocket.readyState === helper.Objects.webSocket.OPEN) {
-          helper.Objects.webSocket.send('');
-        }
-        helper.Objects.timerID = setTimeout(helper.WebSocket.keepAlive, helper.Config.webSocketTimeout);
-      }
-    },
-    getState: function () {
-      return helper.WebSocket.ws.state;
-    },
-    open: function (wsUrl, cb) {
-      helper.WebSocket.ws = new WebSocket(wsUrl);
-      helper.WebSocket.ws.onmessage = helper.WebSocket.messageReceived;
-      helper.WebSocket.ws.onclose = helper.WebSocket.closeCallback;
-      helper.WebSocket.ws.onerror = helper.WebSocket.error;
-      helper.WebSocket.ws.onopen = function (evt) {
-        helper.WebSocket.onOpen(evt);
-        cb && cb();
-      };
-    },
-    onOpen: function (evt) {
-      console.log("WebSocket conntection status: " + evt.srcElement.readyState);
-    },
-    closeConnection: function () {
-      if (typeof helper.WebSocket.ws !== 'undefined') {
-        helper.WebSocket.ws.close();
-        console.log('websocket closed');
-      }
-    },
-    closeCallback: function (cb) {
-      if (typeof helper.WebSocket.ws !== 'undefined') {
-        cb && cb();
-      }
-    },
-    messageReceived: function (evt) {
-      if (typeof helper.WebSocket.ws !== 'undefined') {
-        console.log("Server : " + evt.data);
-      }
-    },
-    messageSend: function (msg) {
-      if (typeof helper.WebSocket.ws !== 'undefined') {
-        helper.WebSocket.ws.send(msg);
-      }
-    },
-    error: function (evt) {
-      console.log("Socket error :" + evt.data);
     }
   }
 };
