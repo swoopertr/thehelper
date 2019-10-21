@@ -1,4 +1,4 @@
-helper={
+helper = {
     WebSocket: {
     ws: undefined,
     isSupported: function () {
