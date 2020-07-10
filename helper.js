@@ -40,10 +40,10 @@ var helper = {
     }
   },
   Ajax: {
-    isScriptLoaded: function (src) {
+    isScriptLoaded: function (url) {
       var scripts = document.getElementsByTagName("script");
       for (var i = 0; i < scripts.length; i++)
-        if (scripts[i].getAttribute('src') === src) return true;
+        if (scripts[i].getAttribute('src') === url) return true;
       return false;
     },
     loadScriptAsync: function (url, cb) {
@@ -139,15 +139,4 @@ var helper = {
     }
   }
 };
-String.prototype.trim = function () {
-  return this.replace(/^s+|s+$/g, "");
-};
-String.prototype.capitalize = function () {
-  return this.charAt(0).toUpperCase() + this.slice(1);
-};
-String.prototype.removeNonASCII = function(){
-  return this.replace(/[^\x20-\x7E]/g, '');
-};
-String.prototype.stripHTMLTags = function(){
-  return this.replace(/<[^>]*>/g, '');
-};
+helper.init();
