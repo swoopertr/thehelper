@@ -26,5 +26,4 @@ helper = {
       elem.scrollIntoView(true);
     }
   }
-
 };

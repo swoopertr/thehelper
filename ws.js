@@ -52,4 +52,5 @@ helper = {
     error: function (evt) {
       console.log("Socket error :" + evt.data);
     }
-  }};
+  }
+};
