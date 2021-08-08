@@ -13,12 +13,10 @@ helper = {
       return Object.keys(jsObj);
     },
     isEmpty: function (jsObj) {
-      for (var key in jsObj) {
-        if (jsObj.hasOwnProperty(key)) {
-          return false;
-        }
-      }
-      return true;
+      return (
+        Object.prototype.toString.call(value) === '[object Object]' &&
+        JSON.stringify(value) === '{}'
+      );
     },
     domReady: function (cb) {
       if (typeof cb !== 'function') return;
