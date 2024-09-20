@@ -8,7 +8,7 @@
 
     function loadScriptAsync(url, cb, errcb) {
         try {
-            if (dyg.isScriptLoaded(url)) {
+            if (thehelper.isScriptLoaded(url)) {
                 cb && cb();
             } else {
                 var script = document.createElement("script");
@@ -142,7 +142,7 @@
 		}
     }
     
-    window.dyg ={
+    window.thehelper ={
         isScriptLoaded: isScriptLoaded,
         loadScriptAsync:loadScriptAsync,
         loadCssAsync:loadCssAsync,

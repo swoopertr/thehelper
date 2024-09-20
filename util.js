@@ -54,7 +54,7 @@ helper = {
     },
     loadScriptAsync: function (url, cb, errcb) {
       try {
-        if (dyg.isScriptLoaded(url)) {
+        if (thehelper.isScriptLoaded(url)) {
           cb && cb();
         } else {
           var script = document.createElement("script");
