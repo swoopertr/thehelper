@@ -5,6 +5,7 @@ if(helper){
     window.helper={};
 }
 
+
 //canvas context is 2D;
 helper.Canvas2D = {
     getCanvas:function (selector) {
@@ -18,10 +19,29 @@ helper.Canvas2D = {
         canvas.height = height;
         canvas.width = width;
     },
-    draw: function(canvas){
+    drawLine: function(canvas, x1, y1, x2, y2, color,lineWidth=3) {
         //get context 
+        let ctx = helper.Canvas2D.getContext(canvas);
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.fill();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+    },
+    drawRectange: function(canvas, x1, y1, x2, y2, color){
         const ctx = helper.Canvas2D.getContext(canvas);
-        ctx.fillStyle = "rgb(255 0 255 / 75%)";
-        ctx.fillRect(25, 100, 175, 50);
+        ctx.fillStyle = color;
+        ctx.fillRect(x1, y1, x2, y2);
+    },
+    pointToPointBeizerCurve: function(canvas, x1, y1, x2, y2, color, lineWidth=3){
+        let ctx = helper.Canvas2D.getContext(canvas);
+        
+        ctx.moveTo(x1,y1);
+        ctx.bezierCurveTo(50,90,159,-30, x2,y2);
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = color;
+        ctx.stroke();
     }
 };
