@@ -1,4 +1,6 @@
 const CONTEXT_2D = '2d';
+const CONTEXT_WEBGL = 'webgl';
+const EXPERIMENTAL_WEBGL = 'experimental-webgl';
 if(helper){
     //ok
 }else{
@@ -45,3 +47,26 @@ helper.Canvas2D = {
         ctx.stroke();
     }
 };
+
+helper.Canvas3D = {
+    getCanvas:function (selector) {
+        const canvas = document.querySelector(selector);
+        return canvas;
+    },
+    getContext : function(canvas){
+        return canvas.getContext(CONTEXT_3D);
+    },
+    initializeWebGL : function() {
+        var webgl = canvas.getContext(CONTEXT_WEBGL) 
+            || canvas.getContext(EXPERIMENTAL_WEBGL);
+ 
+        if (!webgl || !(webgl instanceof WebGLRenderingContext) ) {
+            alert('Failed to get WebGL context.');
+        } else {
+            alert('Great, your browser supports WebGL.');
+        }
+        return webgl;
+    },
+    
+
+}
