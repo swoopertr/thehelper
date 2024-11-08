@@ -48,6 +48,7 @@ helper.Canvas2D = {
     }
 };
 
+//canvas context is 3D;
 helper.Canvas3D = {
     getCanvas:function (selector) {
         const canvas = document.querySelector(selector);

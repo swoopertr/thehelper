@@ -10,8 +10,8 @@ var helper = {
         getById: function (id) {
             return document.getElementById(id);
         },
-        getByClass: function (cName) {
-            return document.getElementsByClassName(cName);
+        getByClass: function (className) {
+            return document.getElementsByClassName(className);
         }
     },
     QueryString: {
