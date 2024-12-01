@@ -5,7 +5,12 @@
             if (scripts[i].getAttribute('src') == src) return true;
         return false;
     }
-
+/**
+ * 
+ * @param {string} url 
+ * @param {function} cb 
+ * @param {function} errcb 
+ */
     function loadScriptAsync(url, cb, errcb) {
         try {
             if (thehelper.isScriptLoaded(url)) {
